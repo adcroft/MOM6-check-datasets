@@ -1,4 +1,6 @@
 check_data:
+  tags:
+    - pan
   script:
     # Create/update master list of files pointed to by MOM6-examples
     - make all_files.lst
