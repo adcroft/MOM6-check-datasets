@@ -1,0 +1,5 @@
+MOM6-examples
+ftp
+*.tgz
+*.md5
+!hash.md5
