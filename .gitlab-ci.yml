@@ -2,6 +2,10 @@ check_data:
   tags:
     - pan
   script:
+    # Clone MOM6-examples
+    - make MOM6-examples
+    # Point .datasets to archive
+    - ln -s /archive/gold/datasets MOM6-examples/.datasets
     # Create/update master list of files pointed to by MOM6-examples
     - make all_files.lst
     # Checksum data pointed to by MOM6-examples
