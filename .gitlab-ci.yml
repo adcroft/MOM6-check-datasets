@@ -1,0 +1,19 @@
+check_data:
+  script:
+    # Create/update master list of files pointed to by MOM6-examples
+    - make all_files.lst
+    # Checksum data pointed to by MOM6-examples
+    - make md5
+    # List of files in datasets
+    - make test_download
+    # Download special cases from ftp site
+    make ftp/OM4_025.v20180328.tgz
+    make ftp/OM4_05.v20180328.tgz
+    make ftp/obs.tgz
+    make ftp/obs.woa13.tgz
+    make ftp/OM4_025.v20180328
+    make ftp/OM4_05.v20180328
+    make ftp/obs
+    make ftp/obs.woa13
+    # Check all other normal cases from ftp site
+    make test_download
