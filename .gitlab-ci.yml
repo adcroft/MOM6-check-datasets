@@ -10,8 +10,6 @@ check_data:
     - make all_files.lst
     # Checksum data pointed to by MOM6-examples
     - make md5
-    # List of files in datasets
-    - make test_download
     # Download special cases from ftp site
     - make ftp/OM4_025.v20180328.tgz
     - make ftp/OM4_05.v20180328.tgz
