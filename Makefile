@@ -20,16 +20,16 @@ hash.md5: $(addsuffix .md5,$(DIRS))
 
 download: $(foreach d,$(DIRS),ftp/$(d).tgz)
 ftp/%.tgz:
-	-mkdir -p ftp; cd $(@D); wget ftp://ftp.gfdl.noaa.gov/home/aja/datasets/$(@F)
+	mkdir -p ftp; cd $(@D); wget ftp://ftp.gfdl.noaa.gov/home/aja/datasets/$(@F)
 unpack_download: $(foreach d,$(DIRS),ftp/$(d))
 ftp/%: ftp/%.tgz
-	-cd $(@D); tar xf $(<F)
+	cd $(@D); tar xf $(<F)
 test_download: md5 $(foreach d,$(DIRS),ftp/$(d).test)
 ftp/%.test: ftp/%
-	-cd $(@D); md5sum -c ../$*.md5 && touch $(@F)
+	cd $(@D); md5sum -c ../$*.md5 && touch $(@F)
 md5_download: $(foreach d,$(DIRS),ftp/$(d).md5)
 ftp/%.md5: ftp/%
-	-cd $(@D); md5sum `find $* -type f | sort` > $(@F)
+	cd $(@D); md5sum `find $* -type f | sort` > $(@F)
 
 clean:
 	-rm -f *.md5 ftp/*.md5 ftp/*.test all_files.lst
