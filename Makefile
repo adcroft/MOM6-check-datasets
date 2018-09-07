@@ -2,7 +2,7 @@ all: md5
 	md5sum -c hash.md5
 depend: all_files.lst
 all_files.lst: MOM6-examples/.datasets MOM6-examples
-	find MOM6-examples/[oilc]* -type l -exec readlink --canonicalize {} \; | grep "/datasets" | sort -f | uniq | sed 's:.*/datasets/::' > $@
+	find MOM6-examples/[oilc]* -type l -exec readlink --canonicalize {} \; | grep "/datasets/" | sort -f | uniq | sed 's:.*/datasets/::' > $@
 MOM6-examples/.datasets: | MOM6-examples
 	ln -s /lustre/f1/pdata/gfdl_O/datasets MOM6-examples/.datasets
 MOM6-examples:
