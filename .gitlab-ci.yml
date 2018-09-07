@@ -9,7 +9,7 @@ check_data:
     # Create/update master list of files pointed to by MOM6-examples
     - make all_files.lst
     # Make sure files are online
-    - dmget `cat /vftmp/Alistair.Adcroft/MOM6-datasets/all_files.lst`
+    - cat all_files.lst | (cd MOM6-examples/.datasets/ ; xargs dmls -l )
     # Checksum data pointed to by MOM6-examples
     - make md5
     # Download special cases from ftp site
