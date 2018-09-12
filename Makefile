@@ -21,12 +21,12 @@ hash.md5: $(addsuffix .md5,$(DIRS))
 download: $(foreach d,$(DIRS),ftp/$(d).tgz)
 ftp/%.tgz:
 	mkdir -p ftp; cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/home/aja/datasets/$(@F)
-unpack_download: $(foreach d,$(DIRS),ftp/$(d))
-ftp/%: ftp/%.tgz
-	cd $(@D); tar xf $(<F)
 test_download: md5 $(foreach d,$(DIRS),ftp/$(d).test)
 ftp/%.test: ftp/%
 	cd $(@D); md5sum -c ../$*.md5 && touch $(@F)
+unpack_download: $(foreach d,$(DIRS),ftp/$(d))
+ftp/%: ftp/%.tgz
+	cd $(@D); tar xf $(<F)
 md5_download: $(foreach d,$(DIRS),ftp/$(d).md5)
 ftp/%.md5: ftp/%
 	cd $(@D); md5sum `find $* -type f | sort` > $(@F)
