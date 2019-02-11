@@ -20,7 +20,7 @@ hash.md5: $(addsuffix .md5,$(DIRS))
 
 download: $(foreach d,$(DIRS),ftp/$(d).tgz)
 ftp/%.tgz:
-	mkdir -p ftp; cd $(@D); wget ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
+	mkdir -p ftp; cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
 	#mkdir -p ftp; cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
 test_download: md5 $(foreach d,$(DIRS),ftp/$(d).test)
 ftp/%.test: ftp/%
