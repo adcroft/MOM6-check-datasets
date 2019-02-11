@@ -33,7 +33,7 @@ md5_download: $(foreach d,$(DIRS),ftp/$(d).md5)
 ftp/%.md5: ftp/%
 	cd $(@D); md5sum `find $* -type f | sort` > $(@F)
 
-special-cases: ftp/obs.woa13.tgz ftp/obs.woa13
+special-cases: ftp/obs.woa13.tgz ftp/obs.woa13 ftp/obs.tgz ftp/obs
 
 clean:
 	-rm -f *.md5 ftp/*.md5 ftp/*.test all_files.lst
