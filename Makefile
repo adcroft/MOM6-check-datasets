@@ -33,7 +33,23 @@ md5_download: $(foreach d,$(DIRS),ftp/$(d).md5)
 ftp/%.md5: ftp/%
 	cd $(@D); md5sum `find $* -type f | sort` > $(@F)
 
-special-cases: ftp/OM4_025.v20180328.tgz ftp/OM4_05.v20180328.tgz ftp/obs.tgz ftp/obs.woa13.tgz ftp/OM4_025.v20180328 ftp/OM4_05.v20180328 ftp/obs ftp/obs.woa13
+special-cases: ftp/obs.woa13.tgz ftp/obs.woa13
 
 clean:
 	-rm -f *.md5 ftp/*.md5 ftp/*.test all_files.lst
+
+gitlab:
+	# Clone MOM6-examples
+	make MOM6-examples
+	# Point .datasets to archive
+	-ln -s /archive/gold/datasets MOM6-examples/.datasets
+	# Create/update master list of files pointed to by MOM6-examples
+	make all_files.lst
+	# Make sure files are online
+	cat all_files.lst | (cd MOM6-examples/.datasets/ ; xargs dmget )
+	# Checksum data pointed to by MOM6-examples
+	make md5
+	# Fetch special case data
+	make special-cases
+	# Download tarfiles, unpack and check md5 match
+	make test_download

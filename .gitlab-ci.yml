@@ -12,5 +12,7 @@ check_data:
     - cat all_files.lst | (cd MOM6-examples/.datasets/ ; xargs dmget )
     # Checksum data pointed to by MOM6-examples
     - make md5
+    # Fetch special case data
+    - make special-cases
     # Download tarfiles, unpack and check md5 match
     - make test_download
