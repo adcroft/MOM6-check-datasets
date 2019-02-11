@@ -12,14 +12,5 @@ check_data:
     - cat all_files.lst | (cd MOM6-examples/.datasets/ ; xargs dmget )
     # Checksum data pointed to by MOM6-examples
     - make md5
-    # Download special cases from ftp site
-    - make ftp/OM4_025.v20180328.tgz
-    - make ftp/OM4_05.v20180328.tgz
-    - make ftp/obs.tgz
-    - make ftp/obs.woa13.tgz
-    - make ftp/OM4_025.v20180328
-    - make ftp/OM4_05.v20180328
-    - make ftp/obs
-    - make ftp/obs.woa13
-    # Check all other normal cases from ftp site
+    # Download tarfiles, unpack and check md5 match
     - make test_download
