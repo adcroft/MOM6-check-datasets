@@ -2,14 +2,14 @@ all: md5
 	md5sum -c hash.md5
 depend: all_files.lst
 all_files.lst: MOM6-examples/.datasets MOM6-examples
-	find MOM6-examples/[oilc]* -type l -exec readlink --canonicalize {} \; | egrep -v "/MOM6-examples/|datasets$$" | sort -f | uniq | sed 's:.*/datasets/::;s:.*/mdteam/::' > $@
+	find MOM6-examples/[oilc]* -type l -exec readlink --canonicalize {} \; | egrep -v "/MOM6-examples/|datasets$$" | LC_ALL=C /bin/sort -f | uniq | sed 's:.*/datasets/::;s:.*/mdteam/::' > $@
 MOM6-examples/.datasets: | MOM6-examples
 	ln -s /lustre/f2/pdata/gfdl_O/datasets MOM6-examples/.datasets
 MOM6-examples:
 	git clone https://github.com/NOAA-GFDL/MOM6-examples.git
 
-DIRS = $(shell test -f all_files.lst && sed 's:/.*::' all_files.lst | uniq)
-tarfiles: all_files.lst $(addsuffix .tgz,$(DIRS))
+DIRS = $(shell test -f all_files.lst && sed 's:/.*::' all_files.lst | sort | uniq)
+tarfiles: $(addsuffix .tgz,$(DIRS))
 $(addsuffix .tgz,$(DIRS)):
 	cd MOM6-examples/.datasets && tar zcvf $(PWD)/$@ `grep ^$(basename $@)/ $(PWD)/all_files.lst`
 md5: all_files.lst $(addsuffix .md5,$(DIRS))
@@ -31,9 +31,9 @@ ftp/%: ftp/%.tgz
 	touch $@
 md5_download: $(foreach d,$(DIRS),ftp/$(d).md5)
 ftp/%.md5: ftp/%
-	cd $(@D); md5sum `find $* -type f | sort` > $(@F)
+	cd $(@D); md5sum `find $* -type f | LC_ALL=C /bin/sort` > $(@F)
 
-special-cases: ftp/obs.woa13.tgz ftp/obs.woa13 ftp/obs.tgz ftp/obs
+special-cases: ftp/obs.woa13 ftp/obs
 
 clean:
 	-rm -f *.md5 ftp/*.md5 ftp/*.test all_files.lst
