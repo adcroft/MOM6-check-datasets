@@ -1,10 +1,13 @@
+SHELL = /bin/bash
+
 all: md5
 	md5sum -c hash.md5
 depend: all_files.lst
 all_files.lst: MOM6-examples/.datasets MOM6-examples
 	find MOM6-examples/[oilc]* -type l -exec readlink --canonicalize {} \; | egrep -v "/MOM6-examples/|datasets$$" | LC_ALL=C /bin/sort -f | uniq | sed 's:.*/datasets/::;s:.*/mdteam/::' > $@
 MOM6-examples/.datasets: | MOM6-examples
-	ln -s /lustre/f2/pdata/gfdl_O/datasets MOM6-examples/.datasets
+	test -d /lustre/f2/pdata/gfdl_O/datasets && ln -s /lustre/f2/pdata/gfdl_O/datasets MOM6-examples/.datasets || true
+	test -d /archive/gold/datasets && ln -s /archive/gold/datasets MOM6-examples/.datasets || true
 MOM6-examples:
 	git clone https://github.com/NOAA-GFDL/MOM6-examples.git
 
@@ -21,7 +24,6 @@ hash.md5: $(addsuffix .md5,$(DIRS))
 download: $(foreach d,$(DIRS),ftp/$(d).tgz)
 ftp/%.tgz:
 	mkdir -p ftp; cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
-	#mkdir -p ftp; cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
 test_download: md5 $(foreach d,$(DIRS),ftp/$(d).test)
 ftp/%.test: ftp/%
 	cd $(@D); md5sum -c ../$*.md5 && touch $(@F)
