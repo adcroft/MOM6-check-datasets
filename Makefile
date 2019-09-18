@@ -44,9 +44,9 @@ gitlab:
 	# Clone MOM6-examples
 	make MOM6-examples
 	# Point .datasets to archive
-	make special-cases
+	make MOM6-examples/.datasets
 	# Create/update master list of files pointed to by MOM6-examples
-	make all_files.lst
+	make -o all_files.lst
 	# Make sure files are online
 	cat all_files.lst | (cd MOM6-examples/.datasets/ ; xargs dmget )
 	# Checksum data pointed to by MOM6-examples
