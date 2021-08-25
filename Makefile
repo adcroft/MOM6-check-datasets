@@ -12,9 +12,10 @@ MOM6-examples:
 	git clone https://github.com/NOAA-GFDL/MOM6-examples.git
 
 DIRS = $(shell test -f all_files.lst && sed 's:/.*::' all_files.lst | sort | uniq)
-tarfiles: $(addsuffix .tgz,$(DIRS))
-$(addsuffix .tgz,$(DIRS)):
-	cd MOM6-examples/.datasets && tar zcvf $(PWD)/$@ `grep ^$(basename $@)/ $(PWD)/all_files.lst`
+tarfiles: $(foreach d,$(DIRS),newdir/$(d).tgz)
+$(foreach d,$(DIRS),newdir/$(d).tgz):
+	mkdir -p newdir
+	cd MOM6-examples/.datasets && tar zcvf $(PWD)/$@ `grep ^$(basename $(@F))/ $(PWD)/all_files.lst`
 md5: all_files.lst $(addsuffix .md5,$(DIRS))
 $(addsuffix .md5,$(DIRS)):
 	(cd MOM6-examples/.datasets && md5sum `grep ^$(basename $@)/ $(PWD)/all_files.lst`) > $@
