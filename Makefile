@@ -22,19 +22,19 @@ $(addsuffix .md5,$(DIRS)):
 hash.md5: $(addsuffix .md5,$(DIRS))
 	md5sum $^ > $@
 
-download: $(foreach d,$(DIRS),ftp/$(d).tgz)
-ftp/%.tgz:
-	mkdir -p ftp; cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
-test_download: md5 $(foreach d,$(DIRS),ftp/$(d).test)
-ftp/%.test: ftp/%
-	cd $(@D); md5sum -c ../$*.md5 && touch $(@F)
-unpack_download: $(foreach d,$(DIRS),ftp/$(d))
-ftp/%: ftp/%.tgz
-	cd $(@D); tar xf $(<F)
+download: $(foreach d,$(DIRS),ftp-download/$(d).tgz)
+ftp-download/%.tgz:
+	mkdir -p $(@D); cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
+test_download: md5 $(foreach d,$(DIRS),ftp-test/$(d).test)
+ftp-test/%.test: ftp-md5/%.md5
+	mkdir -p $(@D) ; ( cd ftp-unpacked ; md5sum -c ../$*.md5 ) && touch $@
+unpack_download: $(foreach d,$(DIRS),ftp-unpacked/$(d))
+ftp-unpacked/%: ftp-download/%.tgz
+	mkdir -p $(@D) ; cd $(@D); tar xf ../$<
 	touch $@
-md5_download: $(foreach d,$(DIRS),ftp/$(d).md5)
-ftp/%.md5: ftp/%
-	cd $(@D); md5sum `find $* -type f | LC_ALL=C /bin/sort` > $(@F)
+md5_download: $(foreach d,$(DIRS),ftp-md5/$(d).md5)
+ftp-md5/%.md5: ftp-unpacked/%
+	(cd $(<D); md5sum `find $* -type f | LC_ALL=C /bin/sort` ) > $@
 
 special-cases: ftp/obs.woa13 ftp/obs ftp/obs.woa13.tgz ftp/obs.tgz
 
