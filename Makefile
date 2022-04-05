@@ -6,7 +6,7 @@ depend: all_files.lst
 all_files.lst: MOM6-examples/.datasets MOM6-examples
 	find MOM6-examples/[oilc]* -type l -exec readlink --canonicalize {} \; | egrep -v "/MOM6-examples/|datasets$$" | LC_ALL=C /bin/sort -f | uniq | sed 's:.*/datasets/::;s:.*/mdteam/::' > $@
 MOM6-examples/.datasets: | MOM6-examples
-	test -d /lustre/f2/pdata/gfdl_O/datasets && ln -s /lustre/f2/pdata/gfdl_O/datasets MOM6-examples/.datasets || true
+	test -d /lustre/f2/pdata/gfdl/gfdl_O/datasets && ln -s /lustre/f2/pdata/gfdl/gfdl_O/datasets MOM6-examples/.datasets || true
 	test -d /archive/gold/datasets && ln -s /archive/gold/datasets MOM6-examples/.datasets || true
 MOM6-examples:
 	git clone https://github.com/NOAA-GFDL/MOM6-examples.git
