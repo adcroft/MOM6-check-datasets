@@ -46,6 +46,8 @@ special-cases: ftp-unpacked/obs.woa13 ftp-download/obs.woa13.tgz \
 
 clean:
 	-rm -f *.md5 ftp/*.md5 ftp/*.test all_files.lst
+Clean: clean
+	-rm -rf ftp-download ftp-unpacked ftp-md5 ftp-test
 
 gitlab:
 	# Clone MOM6-examples
