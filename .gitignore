@@ -3,3 +3,5 @@ ftp
 *.tgz
 *.md5
 !hash.md5
+ftp-unpacked
+ftp-test

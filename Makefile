@@ -14,7 +14,7 @@ MOM6-examples:
 DIRS = $(shell test -f all_files.lst && sed 's:/.*::' all_files.lst | sort | uniq)
 tarfiles: $(foreach d,$(DIRS),newdir/$(d).tgz)
 $(foreach d,$(DIRS),newdir/$(d).tgz):
-	mkdir -p newdir
+	@mkdir -p newdir
 	cd MOM6-examples/.datasets && tar zcvf $(PWD)/$@ `grep ^$(basename $(@F))/ $(PWD)/all_files.lst`
 md5: all_files.lst $(addsuffix .md5,$(DIRS))
 $(addsuffix .md5,$(DIRS)):
@@ -24,19 +24,25 @@ hash.md5: $(addsuffix .md5,$(DIRS))
 
 download: $(foreach d,$(DIRS),ftp-download/$(d).tgz)
 ftp-download/%.tgz:
-	mkdir -p $(@D); cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
+	@mkdir -p $(@D)
+	cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
 test_download: md5 $(foreach d,$(DIRS),ftp-test/$(d).test)
 ftp-test/%.test: ftp-md5/%.md5
-	mkdir -p $(@D) ; ( cd ftp-unpacked ; md5sum -c ../$*.md5 ) && touch $@
+	@mkdir -p $(@D)
+	( cd ftp-unpacked ; md5sum -c ../$*.md5 ) && touch $@
 unpack_download: $(foreach d,$(DIRS),ftp-unpacked/$(d))
 ftp-unpacked/%: ftp-download/%.tgz
-	mkdir -p $(@D) ; cd $(@D); tar xf ../$<
+	@mkdir -p $(@D)
+	cd $(@D); tar xf ../$<
 	touch $@
 md5_download: $(foreach d,$(DIRS),ftp-md5/$(d).md5)
 ftp-md5/%.md5: ftp-unpacked/%
+	@mkdir -p $(@D)
 	(cd $(<D); md5sum `find $* -type f | LC_ALL=C /bin/sort` ) > $@
 
-special-cases: ftp/obs.woa13 ftp/obs ftp/obs.woa13.tgz ftp/obs.tgz
+special-cases: ftp-unpacked/obs.woa13 ftp-download/obs.woa13.tgz \
+               ftp-unpacked/obs ftp-download/obs.tgz \
+               ftp-unpacked/reanalysis-sample ftp-download/reanalysis-sample.tgz
 
 clean:
 	-rm -f *.md5 ftp/*.md5 ftp/*.test all_files.lst
