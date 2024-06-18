@@ -2,9 +2,12 @@ SHELL = /bin/bash
 
 all: md5
 	md5sum -c hash.md5
+
 depend: all_files.lst
+
 all_files.lst: MOM6-examples/.datasets MOM6-examples
 	find MOM6-examples/[oilc]* -type l -exec readlink --canonicalize {} \; | egrep -v "/MOM6-examples/|datasets$$" | LC_ALL=C /bin/sort -f | uniq | sed 's:.*/datasets/::;s:.*/mdteam/::' > $@
+
 MOM6-examples/.datasets: | MOM6-examples
 	test -d /lustre/f2/pdata/gfdl/gfdl_O/datasets && ln -s /lustre/f2/pdata/gfdl/gfdl_O/datasets MOM6-examples/.datasets || true
 	test -d /archive/gold/datasets && ln -s /archive/gold/datasets MOM6-examples/.datasets || true
@@ -26,15 +29,18 @@ download: $(foreach d,$(DIRS),ftp-download/$(d).tgz)
 ftp-download/%.tgz:
 	@mkdir -p $(@D)
 	cd $(@D); wget -nv ftp://ftp.gfdl.noaa.gov/perm/Alistair.Adcroft/MOM6-testing/$(@F)
+
 test_download: md5 $(foreach d,$(DIRS),ftp-test/$(d).test)
 ftp-test/%.test: ftp-md5/%.md5
 	@mkdir -p $(@D)
 	( cd ftp-unpacked ; md5sum -c ../$*.md5 ) && touch $@
+
 unpack_download: $(foreach d,$(DIRS),ftp-unpacked/$(d))
 ftp-unpacked/%: ftp-download/%.tgz
 	@mkdir -p $(@D)
 	cd $(@D); tar xf ../$<
 	touch $@
+
 md5_download: $(foreach d,$(DIRS),ftp-md5/$(d).md5)
 ftp-md5/%.md5: ftp-unpacked/%
 	@mkdir -p $(@D)
